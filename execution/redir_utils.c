@@ -36,7 +36,7 @@ int	redir_file(char *file, int target_fd, int flags)
 void	apply_redir(t_in_out_fds *redir)
 {
 	int	fd;
-
+	perror("here:");
 	if (redir->type == REDIR_HEREDOC)
 	{
 		fd = open(redir->filename, O_RDONLY);
@@ -64,6 +64,7 @@ void	apply_all_redirs(t_in_out_fds *redir)
 	while (redir)
 	{
 		apply_redir(redir);
+		free(redir->filename);
 		redir = redir->next;
 	}
 }

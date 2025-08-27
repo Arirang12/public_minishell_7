@@ -26,10 +26,20 @@ void	process_line(char *line, t_env **env)
 
 	tok = tokenize(line, *env);
 	cmd = parse_commands(tok);
+	//t_cmd  *tmp_cmd = cmd;
+	//for (int i = 0; tmp_cmd; tmp_cmd = tmp_cmd->next) {
+	//	if (tmp_cmd->io_fds) {
+	//		puts("ioioioioioio");
+	//		puts(tmp_cmd->io_fds->filename);
+	//		printf("%i\n", i);
+	//	}
+	//	i++;
+	//}
 	free_token_list(tok);
 	check_if_cmd(cmd, env);
 	heredocs_cleanup(cmd);
 	free_cmds(&cmd);
+	//free(cmd);
 }
 
 int	main(int argc, char **argv, char **envp)

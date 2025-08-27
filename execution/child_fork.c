@@ -19,17 +19,28 @@ void	child_run(t_cmd *cmd, t_env *env)
 	exit_code = 0;
 	setup_child(cmd->pipe_fds, cmd->idx, cmd->total);
 	apply_all_redirs(cmd->io_fds);
-	if (is_builtin(cmd->args[0]))
+	if (cmd->args && cmd->args[0])
 	{
-		run_builtin(cmd->args, &env, &exit_code);
-		exit(exit_code);
-	}
-	if (ft_strchr(cmd->args[0], '/'))
-	{
-		if (check_cmd_errors(cmd->args[0], &exit_code) != 0)
+		if (is_builtin(cmd->args[0]))
+		{
+			run_builtin(cmd->args, &env, &exit_code);
+			//printf("here\n");
+			free_all(cmd, env); // don't remove still not tested!!
 			exit(exit_code);
+		}
+		if (ft_strchr(cmd->args[0], '/'))
+		{
+			if (check_cmd_errors(cmd->args[0], &exit_code) != 0)
+			{
+				free_all(cmd, env); // don't remove still not tested!!
+				exit(exit_code);
+			}
+		}
+		exec_run(cmd, env);
 	}
-	exec_run(cmd, env);
+	//free_all(cmd, env);
+	puts("child_run");
+	exit(exit_code);
 }
 
 void	child_single_run(t_cmd *cmd, char *path, t_env *env)
@@ -81,7 +92,10 @@ int	fork_one(t_cmd *cmd, t_env *env, pid_t *pids, int i)
 		return (1);
 	}
 	if (pids[i] == 0)
+	{
+		free(pids);
 		child_run(cmd, env);
+	}
 	return (0);
 }
 
@@ -97,6 +111,8 @@ int	fork_all(t_cmd *cmds, t_env *env, pid_t *pids)
 	while (cur)
 	{
 		cur->idx = i;
+		//if (cur->io_fds)
+		//	printf("bark!!\n");
 		if (fork_one(cur, env, pids, i))
 		{
 			ret = 1;

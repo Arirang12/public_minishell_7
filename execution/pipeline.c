@@ -24,6 +24,7 @@ int pipeline_run(t_cmd *cmds, t_env *env)
     signal(SIGINT, SIG_IGN);
     signal(SIGQUIT, SIG_IGN);
     n = cmd_count(cmds);
+	printf("n: %i\n", n);
     if (n == 0)
         return (0);
     pipes = init_pipes(n);

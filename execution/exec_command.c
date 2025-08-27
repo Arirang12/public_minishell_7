@@ -14,6 +14,7 @@
 
 int	exec_cmd(t_cmd *cmd, t_env *env, int *status)
 {
+	//printf("ba9!!\n");
 	int	err;
 
 	if (!cmd->args[0] || cmd->args[0][0] == '\0')
@@ -52,6 +53,8 @@ int fork_and_wait(t_cmd *cmd, char *path, t_env *env)
         signal(SIGINT, SIG_DFL);
         signal(SIGQUIT, SIG_DFL);
         child_single_run(cmd, path, env);
+		//printf("here1\n");
+		free_all(NULL, env);
         return (0);
     }
     signal(SIGINT, SIG_IGN);

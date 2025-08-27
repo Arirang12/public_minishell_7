@@ -12,9 +12,9 @@
 
 #include "execution.h"
 
-int	create_all_pipes(int **pipes, int n)
+int create_all_pipes(int **pipes, int n)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (i < n)
@@ -36,9 +36,9 @@ int	create_all_pipes(int **pipes, int n)
 	return (0);
 }
 
-void	close_all_pipes(int **pipes, int n)
+void close_all_pipes(int **pipes, int n)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (i < n)
@@ -51,7 +51,7 @@ void	close_all_pipes(int **pipes, int n)
 	free(pipes);
 }
 
-void	setup_child(int **pipes, int idx, int total)
+void setup_child(int **pipes, int idx, int total)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
@@ -68,7 +68,7 @@ void	setup_child(int **pipes, int idx, int total)
 	close_all_pipes(pipes, total - 1);
 }
 
-int	print_error(char *cmd, char *msg, int code, int *status)
+int print_error(char *cmd, char *msg, int code, int *status)
 {
 	ft_putstr_fd("minishell: ", 2);
 	write(2, cmd, ft_strlen(cmd));
@@ -77,10 +77,10 @@ int	print_error(char *cmd, char *msg, int code, int *status)
 	return (code);
 }
 
-int	check_cmd_errors(char *cmd, int *status)
+int check_cmd_errors(char *cmd, int *status)
 {
-	char	*new_path;
-	int		ret;
+	char *new_path;
+	int ret;
 
 	new_path = ft_strjoin(cmd, "/");
 	if (access(new_path, F_OK) == 0)

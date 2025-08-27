@@ -32,8 +32,9 @@ int	check_for_syntax_error(t_token *token)
 		return (0);
 	while (token->next)
 	{
-		if (token->type != WORD && (token->next->type != WORD))
+		if (token->type != PIPE && token->type != WORD && token->next->type != WORD)
 		{
+			//printf("here>>>>\n");
 			write(2, "minishell: syntax error near unexpected token ", 47);
 			print_error_type(token->next->type);
 			g_exit = 2;

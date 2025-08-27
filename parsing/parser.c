@@ -37,6 +37,7 @@ int	parsing_redir(t_token **tokens, t_cmd **head, t_cmd **current,
 {
 	if ((*tokens)->next->value && (*tokens)->next->type == WORD)
 	{
+		//printf("next value: `%s`\n",(*tokens)->next->value);
 		add_redirection(*current, get_redirect_type((*tokens)->value),
 			(*tokens)->next->value, (*tokens)->expand);
 		*tokens = (*tokens)->next;
@@ -73,6 +74,45 @@ void	last_parsing(t_cmd **tmp, t_cmd **head, t_cmd **current,
 	}
 }
 
+char	*stringify(t_token_type type) {
+	switch (type)
+	{
+	case SPLIT:
+		return ft_strdup("SPLIT"); 
+		break;
+	case WORD:
+		return ft_strdup("WORD"); 
+		break;
+	case PIPE:
+		return ft_strdup("PIPE"); 
+		break;
+	case REDIR_IN:
+		return ft_strdup("REDIR_IN"); 
+		break;
+	case REDIR_OUT:
+		return ft_strdup("REDIR_OUT"); 
+		break;
+	case APPEND:
+		return ft_strdup("APPEND"); 
+		break;
+	case HEREDOC:
+		return ft_strdup("HEREDOC"); 
+		break;
+	default:
+		break;
+	}
+	return ft_strdup("UNKONWN");
+}
+
+void	print_tokens(t_token *tokens) {
+	for (;tokens; tokens = tokens->next) {
+		char *str_type = stringify(tokens->type);
+		printf("token: `%s`, type: `%s`\n", tokens->value, str_type);
+		free(str_type);
+	}
+}
+
+
 t_cmd	*parse_commands(t_token *tokens)
 {
 	t_cmd	*head;
@@ -84,6 +124,7 @@ t_cmd	*parse_commands(t_token *tokens)
 	tmp = NULL;
 	current = new_cmd();
 	temp_args = NULL;
+	//print_tokens(tokens);
 	while (tokens)
 	{
 		if (tokens->type == PIPE)

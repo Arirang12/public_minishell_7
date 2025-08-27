@@ -14,11 +14,10 @@
 
 char	*heredoc_name(void)
 {
-	int		counter;
+	static int		counter;
 	char	*num;
 	char	*file;
 
-	counter = 0;
 	num = ft_itoa(counter++);
 	file = ft_strjoin("/tmp/ms_heredoc_", num);
 	free(num);
@@ -29,23 +28,30 @@ int	heredoc_fd_new(char **path)
 {
 	int	fd;
 
-	*path = heredoc_name();
-	if (!*path)
-		return (-1);
+	//if (!*path)
+	//	return (-1);
 	while (1)
 	{
-		fd = open(*path, O_RDWR | O_CREAT | O_EXCL, 0600);
-		if (fd != -1)
-			break ;
-		free(*path);
 		*path = heredoc_name();
+		//unlink(*path);
 		if (!*path)
 			return (-1);
+		fd = open(*path, O_RDWR | O_CREAT | O_EXCL, 0600);
+		if (fd != -1) {
+			printf("break!!!\n");
+			break ;
+		}
+		//printf("while fd\n");
+		//unlink(*path);
+		free(*path);
+		//*path = heredoc_name();
+		//printf("not break!\n");
+		//printf("path: %s\n", *path);
 	}
 	return (fd);
 }
 
-int	fork_heredoc(int fd, char *limiter, t_env *env, bool expand)
+int	fork_heredoc(int fd, char *limiter, t_cmd *cmd, t_env *env, bool expand, char *path)
 {
 	pid_t	pid;
 
@@ -57,7 +63,12 @@ int	fork_heredoc(int fd, char *limiter, t_env *env, bool expand)
 		signal(SIGINT, sigint_heredoc);
 		signal(SIGQUIT, SIG_IGN);
 		heredoc_input(fd, limiter, env, expand);
+		//free(limiter); // free 1
+		(void)cmd;
+		free_all(cmd, env);
 		close(fd);
+		free(path);
+		//write(STDERR_FILENO, "*-------------end!--------------*", 34);
 		exit(0);
 	}
 	close(fd);
@@ -78,7 +89,7 @@ char	*wait_heredoc(pid_t pid, char *path)
 	return (path);
 }
 
-char	*make_heredoc(char *limiter, t_env *env, bool expand)
+char	*make_heredoc(char *limiter,t_cmd *cmd, t_env *env, bool expand)
 {
 	char	*path;
 	int		fd;
@@ -89,7 +100,7 @@ char	*make_heredoc(char *limiter, t_env *env, bool expand)
 		return (NULL);
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	pid = fork_heredoc(fd, limiter, env, expand);
+	pid = fork_heredoc(fd, limiter, cmd, env, expand, path);
 	if (pid == -1)
 	{
 		unlink(path);

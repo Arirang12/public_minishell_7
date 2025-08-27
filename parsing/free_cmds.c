@@ -12,14 +12,14 @@
 
 #include "parsing.h"
 
-void	print_tokens(t_token *tokens)
-{
-	while (tokens)
-	{
-		printf("TOKEN: %-10s TYPE: %d\n", tokens->value, tokens->type);
-		tokens = tokens->next;
-	}
-}
+//void	print_tokens(t_token *tokens)
+//{
+//	while (tokens)
+//	{
+//		printf("TOKEN: %-10s TYPE: %d\n", tokens->value, tokens->type);
+//		tokens = tokens->next;
+//	}
+//}
 
 void	free_cmds(t_cmd **cmds)
 {
@@ -37,7 +37,11 @@ void	free_cmds(t_cmd **cmds)
 		{
 			redir = (*cmds)->io_fds;
 			(*cmds)->io_fds = redir->next;
-			free(redir->filename);
+			if (redir->filename)
+			{
+				free(redir->filename);
+				redir->filename = NULL;
+			}
 			free(redir);
 		}
 		tmp = *cmds;

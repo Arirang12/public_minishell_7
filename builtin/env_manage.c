@@ -52,8 +52,11 @@ void	env_free_all(t_env *env)
 	{
 		tmp = env->next;
 		free(env->key);
-		if (env->value)
+		env->key = NULL;
+		if (env->value) {
 			free(env->value);
+			env->value = NULL;
+		}
 		free(env);
 		env = tmp;
 	}
