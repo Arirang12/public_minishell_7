@@ -61,31 +61,20 @@ void	check_if_cmd(t_cmd *cmd, t_env **env)
 	{
 		if (handle_all_heredocs(cmd, *env) != 0)
 			skip_cmd = 1;
-		//printf("skip: %i\n", skip_cmd);
 		if (!skip_cmd && cmd->args && cmd->args[0])
 		{
 			run = (!cmd->next && !cmd->io_fds);
-			//puts("here!!!");
 			if (ft_strcmp(cmd->args[0], "exit") == 0)
 				handle_exit(cmd, *env);
 			else if (is_builtin(cmd->args[0]) && run)
 				run_builtin(cmd->args, env, &g_exit);
 			else 
 			if (cmd->next || cmd->io_fds)
-			{
-				//puts("pink");
 				g_exit = pipeline_run(cmd, *env);
-			}
-			else {
-				//puts("purple");
+			else
 				exec_cmd(cmd, *env, &g_exit);
-			}
-		
 		}
 		else if (cmd->io_fds)
-		{
 			g_exit = pipeline_run(cmd, *env);
-		}
-		//heredocs_cleanup(cmd);
 	}
 }

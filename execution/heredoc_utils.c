@@ -37,16 +37,11 @@ int	heredoc_fd_new(char **path)
 		if (!*path)
 			return (-1);
 		fd = open(*path, O_RDWR | O_CREAT | O_EXCL, 0600);
-		if (fd != -1) {
-			printf("break!!!\n");
+		if (fd != -1)
 			break ;
-		}
-		//printf("while fd\n");
 		//unlink(*path);
 		free(*path);
 		//*path = heredoc_name();
-		//printf("not break!\n");
-		//printf("path: %s\n", *path);
 	}
 	return (fd);
 }

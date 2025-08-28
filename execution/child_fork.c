@@ -18,27 +18,30 @@ void	child_run(t_cmd *cmd, t_env *env)
 
 	exit_code = 0;
 	setup_child(cmd->pipe_fds, cmd->idx, cmd->total);
-	apply_all_redirs(cmd->io_fds);
+	if (apply_all_redirs(cmd->io_fds)) {
+		free_all(cmd->head, env);
+		exit (1);
+	}
 	if (cmd->args && cmd->args[0])
 	{
 		if (is_builtin(cmd->args[0]))
 		{
 			run_builtin(cmd->args, &env, &exit_code);
 			//printf("here\n");
-			free_all(cmd, env); // don't remove still not tested!!
+			free_all(cmd->head, env); // don't remove still not tested!!
 			exit(exit_code);
 		}
 		if (ft_strchr(cmd->args[0], '/'))
 		{
 			if (check_cmd_errors(cmd->args[0], &exit_code) != 0)
 			{
-				free_all(cmd, env); // don't remove still not tested!!
+				free_all(cmd->head, env); // don't remove still not tested!!
 				exit(exit_code);
 			}
 		}
 		exec_run(cmd, env);
 	}
-	//free_all(cmd, env);
+	free_all(cmd->head, env);
 	puts("child_run");
 	exit(exit_code);
 }
@@ -104,15 +107,16 @@ int	fork_all(t_cmd *cmds, t_env *env, pid_t *pids)
 	t_cmd	*cur;
 	int		i;
 	int		ret;
+	t_cmd	*head;
 
 	cur = cmds;
+	head = cmds;
 	i = 0;
 	ret = 0;
 	while (cur)
 	{
 		cur->idx = i;
-		//if (cur->io_fds)
-		//	printf("bark!!\n");
+		cur->head = head;
 		if (fork_one(cur, env, pids, i))
 		{
 			ret = 1;

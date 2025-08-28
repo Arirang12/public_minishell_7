@@ -54,8 +54,8 @@ void	setup_child(int **pipes, int idx, int total);
 
 /* -------------------- Redirections -------------------- */
 int		redir_file(char *file, int target_fd, int flags);
-void	apply_redir(t_in_out_fds *redir);
-void	apply_all_redirs(t_in_out_fds *redir);
+int		apply_redir(t_in_out_fds *redir);
+int		apply_all_redirs(t_in_out_fds *redir);
 
 /* -------------------- Heredoc -------------------- */
 int		write_heredoc(int fd, char *line, t_env *env, bool expand);

@@ -37,6 +37,7 @@ typedef struct s_cmd
 	int					idx;
 	int					total;
 	int					**pipe_fds;
+	struct s_cmd		*head;
 }						t_cmd;
 
 typedef struct s_env

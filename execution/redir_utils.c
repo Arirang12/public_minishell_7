@@ -33,10 +33,10 @@ int	redir_file(char *file, int target_fd, int flags)
 	return (0);
 }
 
-void	apply_redir(t_in_out_fds *redir)
+int	apply_redir(t_in_out_fds *redir)
 {
 	int	fd;
-	perror("here:");
+
 	if (redir->type == REDIR_HEREDOC)
 	{
 		fd = open(redir->filename, O_RDONLY);
@@ -44,29 +44,33 @@ void	apply_redir(t_in_out_fds *redir)
 		{
 			perror("heredoc");
 			close(fd);
-			exit(1);
+			return (1);
 		}
 		close(fd);
 	}
 	else if (redir->type == T_REDIR_IN && redir_file(redir->filename, 0,
 			O_RDONLY))
-		exit(1);
+		return (1);
 	else if (redir->type == T_REDIR_OUT && redir_file(redir->filename, 1,
 			O_WRONLY | O_CREAT | O_TRUNC))
-		exit(1);
+		return (1);
 	else if (redir->type == REDIR_APPEND && redir_file(redir->filename, 1,
 			O_WRONLY | O_CREAT | O_APPEND))
-		exit(1);
+		return (1);
+	return (0);
 }
 
-void	apply_all_redirs(t_in_out_fds *redir)
+int	apply_all_redirs(t_in_out_fds *redir)
 {
 	while (redir)
 	{
-		apply_redir(redir);
+		if (apply_redir(redir))
+			return (1);
 		free(redir->filename);
+		redir->filename = NULL;
 		redir = redir->next;
 	}
+	return (0);
 }
 
 int	write_heredoc(int fd, char *line, t_env *env, bool expand)
